@@ -35,4 +35,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const ProtectedRoutes = ["/dashboard", "/user"];
+
+      if (!isLoggedIn && ProtectedRoutes.includes(nextUrl.pathname)) {
+        return Response.redirect(new URL("/login", nextUrl));
+      }
+      if (isLoggedIn && nextUrl.pathname.startsWith("/login")) {
+        return Response.redirect(new URL("/login", nextUrl));
+      }
+      return true;
+    },
+    jwt({ token, user }) {
+      if (user) token.role = user.role;
+      return token;
+    },
+
+    session({ session, token }) {
+      session.user.id = token.sub;
+      session.user.role = token.role;
+      return session;
+    },
+  },
 });
