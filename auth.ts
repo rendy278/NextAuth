@@ -4,6 +4,8 @@ import { prisma } from "./lib/prisma";
 import Credentials from "next-auth/providers/credentials";
 import { SignInSchema } from "./lib/zod";
 import { compareSync } from "bcrypt-ts";
+import Google from "next-auth/providers/google";
+import GitHub from "next-auth/providers/github";
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
@@ -11,6 +13,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/login",
   },
   providers: [
+    Google,
+    GitHub,
     Credentials({
       credentials: {
         email: {},
